@@ -1,9 +1,9 @@
 function sendMail(messageType, reason, toBeMailedEmail, lengthOfMute){
   var types = {
-    removal: "<p>You have been <strong>kicked/removed</strong> for <strong>" + reason + "</strong> from suggesting in <a href='https://docs.google.com/document/d/1Z2n6Y8NJW6hk7Ql81qD0BUk1P41b-vz4A-U8U1cC2FI/'>'The Wilbur ARG'</a> google document. Please discontinue this action or you may be muted or banned.</p>",
-    ban: "<p>You have been <strong>banned</strong> from suggesting in <a href='https://docs.google.com/document/d/1Z2n6Y8NJW6hk7Ql81qD0BUk1P41b-vz4A-U8U1cC2FI/'>'The Wilbur ARG'</a> google document for <strong>" + reason + "</strong></p>",
-    mute: "<p>You have been <strong>muted</strong> for <strong>" + reason + "</strong> for " + lengthOfMute + " minutes from suggesting in <a href='https://docs.google.com/document/d/1Z2n6Y8NJW6hk7Ql81qD0BUk1P41b-vz4A-U8U1cC2FI/'>'The Wilbur ARG'</a> google document. Please discontinue this action or you may be muted again or banned.</p>",
-    warning: "<p>You have been <strong>warned</strong> for <strong>" + reason + "</strong> in <a href='https://docs.google.com/document/d/1Z2n6Y8NJW6hk7Ql81qD0BUk1P41b-vz4A-U8U1cC2FI/'>'The Wilbur ARG'</a> google document. Please discontinue this action or you may be muted or banned.</p>"  
+    removal: "<p>You have been <strong>kicked/removed</strong> for <strong>" + reason + "</strong> from suggesting in <a href='https://docs.google.com/document/d/1Z2n6Y8NJW6hk7Ql81qD0BUk1P41b-vz4A-U8U1cC2FI/'>&quotThe Wilbur ARG&quot</a> google document. Please discontinue this action or you may be muted or banned.</p>",
+    ban: "<p>You have been <strong>banned</strong> from suggesting in <a href='https://docs.google.com/document/d/1Z2n6Y8NJW6hk7Ql81qD0BUk1P41b-vz4A-U8U1cC2FI/'>&quotThe Wilbur ARG&quot</a> google document for <strong>" + reason + "</strong></p>",
+    mute: "<p>You have been <strong>muted</strong> for <strong>" + reason + "</strong> for " + lengthOfMute + " minutes from suggesting in <a href='https://docs.google.com/document/d/1Z2n6Y8NJW6hk7Ql81qD0BUk1P41b-vz4A-U8U1cC2FI/'>&quotThe Wilbur ARG&quot</a> google document. Please discontinue this action or you may be muted again or banned.</p>",
+    warning: "<p>You have been <strong>warned</strong> for <strong>" + reason + "</strong> in <a href='https://docs.google.com/document/d/1Z2n6Y8NJW6hk7Ql81qD0BUk1P41b-vz4A-U8U1cC2FI/'>&quotThe Wilbur ARG&quot</a> google document. Please discontinue this action or you may be muted or banned.</p>"  
   }
   
   var text = "<h1 style='font-family:sans-serif;font-size:90px;background-color:#c00;text-align:center;padding:40px 0;margin:0 0 20px'>" + messageType.toUpperCase() + "</h1>"

@@ -1,10 +1,10 @@
 var document = {
   doc: function(){
-    var file = DriveApp.getFilesByName(docName).next();
+    var file = DriveApp.getFilesByName(getProperty(DocName)).next();
     if (file.getMimeType() === "application/vnd.google-apps.document") return file;
   },
   sheet: function(name){
-    return SpreadsheetApp.openById(spreadSheetId).getSheetByName(name);
+    return SpreadsheetApp.openById(getProperty("SSID")).getSheetByName(name);
   },
   addCommenters: function(emails){
     console.log("addCommenters: " + JSON.stringify(emails));

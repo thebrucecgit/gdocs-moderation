@@ -9,7 +9,15 @@ function getArrayFromValue(retrievedData){
   return output;
 }
 
+// Menu & Sidebar
+function onOpen() {
+  document.ui().createMenu('Docs Mod')
+    .addItem('Settings', 'showSettings')
+    .addToUi();
+}
+
 function modHandler(){
+  Utilities.sleep(1500);
   var modRequest = document.sheet(modSheet),
   request = modRequest.getRange(modRequest.getLastRow(), 2, 1, 5).getValues()[0],
   user = request[0], offender = request[1], action = request[2], reason = request[3], time = request[4];
@@ -30,6 +38,7 @@ function modHandler(){
 }
 
 function addNewEmail(triggerObj, toBeAddedEmail, reason){
+  Utilities.sleep(1500);
   var bannedEmailsSheet = document.sheet(bannedSheet),
   bannedEmailsArray = getArrayFromValue(bannedEmailsSheet.getRange(2, 2, bannedEmailsSheet.getLastRow()).getValues()),
   mutedEmailsSheet = document.sheet(mutedSheet),

@@ -17,25 +17,31 @@ var information = {
 }
 
 function debug(){
-  information.viewers();
+  PropertiesService.getDocumentProperties().setProperty("RFID", "1gVDfUcLlldFGU7O5EDlq6NlIJUspm8CR0aGnrbVRtxI");
+  PropertiesService.getDocumentProperties().setProperty("DocName", "Wilbur ARG");
 }
 
-function buildTrigger(){
-  var form = FormApp.openById('1gVDfUcLlldFGU7O5EDlq6NlIJUspm8CR0aGnrbVRtxI');
+function buildTriggers(){
+  var requestForm = FormApp.openById(getProperty("RFID"));
   ScriptApp.newTrigger('addNewEmail')
-  .forForm(form)
+  .forForm(requestForm)
+  .onFormSubmit()
+  .create();
+  var modForm = FormApp.openById(getProperty("MFID"));
+  ScriptApp.newTrigger('modHandler')
+  .forForm(modForm)
   .onFormSubmit()
   .create();
 }
-
-function getSpreadSheetID(){
-  var ID = PropertiesService.getScriptProperties().getProperty("SSID");
+// SSID, RFID, MFID, DocName
+function getProperty(propertyType){
+  var ID = PropertiesService.getDocumentProperties().getProperty(propertyType);
   if(ID) return ID;
-  return "No spreadsheet is bounded";
+  return "File is not bound";
 }
 
-function setSpreadSheetID(ID){
-//  var ui = document.ui();
-//  PropertiesService.getScriptProperties().setProperty("SSID", ID);
-//  return "1ZIugQ5L8KSHIPHNEDYSUR-aI7XwPw2wNEezsrQeL1S4";
+function setProperty(propertyType, ID){
+  var ui = document.ui();
+  PropertiesService.getDocumentProperties().setProperty(propertyType, ID);
+  ui.alert("SpreadSheet was bounded to the document", ui.ButtonSet.OK);
 }

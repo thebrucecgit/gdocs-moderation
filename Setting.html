@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <style>
+    body {
+      padding: 10px;
+    }
+    h1 {
+      font-size: 40px;
+    }
+    #output {
+      margin-top: 3px;
+    }
+    form {
+      padding-top: 20px;
+    }
+    .field {
+      width: 260px;
+    }
+    #bottom-text {
+      position: absolute;
+      left: 5px;
+      bottom: 5px;
+    }
+    </style>
+    <script>
+// Prevent forms from submitting.
+function preventFormSubmit() {
+  var forms = document.querySelectorAll('form');
+  for (var i = 0; i < forms.length; i++) {
+    forms[i].addEventListener('submit', function(event) {
+      event.preventDefault();
+    });
+  }
+}
+function onGetSpreadSheetIDSuccess(ID){
+  document.getElementById("output").innerHTML = ID;
+}
+function getSpreadSheetID(){
+  google.script.run.withSuccessHandler(onGetSpreadSheetIDSuccess).getSpreadSheetID();
+}
+window.addEventListener('load', preventFormSubmit);
+window.addEventListener('load', getSpreadSheetID);
+    </script>
+</head>
+  <body>
+    <h1>Settings</h1>
+    <p>Current Spreadsheet ID is: </p>
+    <p id="output"></p>
+    <form class="ui form" onsubmit="google.script.run.withSuccessHandler(getSpreadSheetID).setSpreadSheetID(this.SSID.value);">
+      <div class="field">
+        <label for="SSID">Set the SpreadSheet ID</label>
+        <input type="text" name="SSID" placeholder="Spreadsheet ID"/>
+      </div>
+      <input type="submit" value="Set Form Spreadsheet" class="ui primary button"/>
+    </form>
+    <div id="bottom-text">
+      <p>Created by <a href="https://github.com/thebrucecgit/">Bruce C</a></p>
+    </div>
+  </body>
+</html>
