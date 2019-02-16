@@ -1,6 +1,6 @@
 var document = {
   doc: function(){
-    var file = DriveApp.getFilesByName(getProperty(DocName)).next();
+    var file = DriveApp.getFilesByName(getProperty("DocName")).next();
     if (file.getMimeType() === "application/vnd.google-apps.document") return file;
   },
   sheet: function(name){

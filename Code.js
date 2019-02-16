@@ -16,41 +16,35 @@ function onOpen() {
     .addToUi();
 }
 
-function modHandler(){
-  Utilities.sleep(1500);
-  var modRequest = document.sheet(modSheet),
-  request = modRequest.getRange(modRequest.getLastRow(), 2, 1, 5).getValues()[0],
-  user = request[0], offender = request[1], action = request[2], reason = request[3], time = request[4];
-  switch(action) {
+function modHandler(e){
+  var responses = e.response.getItemResponses();
+  var moderator = responses[0].getResponse(), offender = responses[1].getResponse(), reason = responses[3].getResponse(), time = responses[4].getResponse();
+  switch(responses[2].getResponse()) { // responses[2] is the action to be taken
     case "Remove/Kick": 
-    removeEmail(offender, reason, user, false);
+    removeEmail(offender, reason, moderator, false);
       break;
     case "Ban":
-    banEmail(offender, reason, user);
+    banEmail(offender, reason, moderator);
       break;
     case "Mute":
-    muteEmail(offender, time, reason, user);
+    muteEmail(offender, time, reason, moderator);
       break;
     case "Warn":
-    warnEmail(offender, reason, user);
+    warnEmail(offender, reason, moderator);
       break;
   }
 }
 
-function addNewEmail(triggerObj, toBeAddedEmail, reason){
-  Utilities.sleep(1500);
-  var bannedEmailsSheet = document.sheet(bannedSheet),
+function addNewEmail(e, toBeAddedEmail, reason){
+  var email = e.response.getItemResponses()[0].getResponse(),
+  bannedEmailsSheet = document.sheet(bannedSheet),
   bannedEmailsArray = getArrayFromValue(bannedEmailsSheet.getRange(2, 2, bannedEmailsSheet.getLastRow()).getValues()),
   mutedEmailsSheet = document.sheet(mutedSheet),
   mutedEmailsArray = getArrayFromValue(mutedEmailsSheet.getRange(2,2, mutedEmailsSheet.getLastRow()).getValues()),
   alreadyAddedEmailsSheet = document.sheet(addedSheet),
   alreadyAddedEmails = alreadyAddedEmailsSheet.getRange(2, 1, alreadyAddedEmailsSheet.getLastRow()).getValues(),
   alreadyAddedEmailsArray = getArrayFromValue(alreadyAddedEmails);
-    
-  var lastRow = document.sheet(formResponse).getLastRow();
-  var emailArr = document.sheet(formResponse).getRange(lastRow, 2).getValues();
-  var email = toBeAddedEmail || emailArr[0][0];
-  
+ 
   if (bannedEmailsArray.indexOf(email) >= 0){ // If user is banned
     document.log("Banned User tried to access: " + email, "BANNED_ATTEMPT", "auto", "GAS");
     return;
@@ -63,12 +57,11 @@ function addNewEmail(triggerObj, toBeAddedEmail, reason){
   document.addCommenters([email]);
   alreadyAddedEmailsSheet.appendRow([email]);
   if(reason === "unmute") return;
-  document.log("New Commenter Added: " + email, "ADD_COMMENTER", reason || "auto", "GAS");  
+  document.log(email, "ADD_COMMENTER", reason || "auto", "GAS");  
 }
 
 function removeEmail(toBeRemovedEmail, reason, user, ban){
-  var emailSheet = document.sheet(formResponse),
-  alreadyAddedEmailsSheet = document.sheet(addedSheet);
+  var alreadyAddedEmailsSheet = document.sheet(addedSheet);
   
   // Remove email from Doc
   document.removeCommenter(toBeRemovedEmail); 
@@ -87,19 +80,18 @@ function removeEmail(toBeRemovedEmail, reason, user, ban){
     sendMail("removal", reason, toBeRemovedEmail);
   }
   if(reason !== "mute") {
-    document.log("Email removed: " + toBeRemovedEmail, "REMOVE_COMMENTER", reason, user);
+    document.log(toBeRemovedEmail, "REMOVE_COMMENTER", reason, user);
   }
 }
 
 function banEmail(toBeBannedEmail, reason, user){
-  var emailSheet = document.sheet(formResponse),
-  bannedEmailsSheet = document.sheet(bannedSheet);
+  var bannedEmailsSheet = document.sheet(bannedSheet);
   
   removeEmail(toBeBannedEmail, reason, undefined, true);
   bannedEmailsSheet.appendRow([new Date().toLocaleString('en-GB',{timeZone: 'UTC'}), toBeBannedEmail, reason, user]);
   
   sendMail("ban", reason, toBeBannedEmail);
-  document.log("Email banned: " + toBeBannedEmail, "BANNED_COMMENTER", reason, user);
+  document.log(toBeBannedEmail, "BANNED_COMMENTER", reason, user);
 }
 
 function muteEmail(toBeMutedEmail, minutes, reason, user){
@@ -111,7 +103,7 @@ function muteEmail(toBeMutedEmail, minutes, reason, user){
   
   document.sheet(mutedSheet).appendRow([new Date().toLocaleString('en-GB',{timeZone: 'UTC'}), toBeMutedEmail, minutes, reason, user]);
   sendMail("mute", reason, toBeMutedEmail, minutes);
-  document.log("Email muted: " + toBeMutedEmail, "MUTED_COMMENTER", reason, user);
+  document.log(toBeMutedEmail, "MUTED_COMMENTER", reason, user);
 }
 
 function unmuteEmail(){
@@ -123,10 +115,10 @@ function unmuteEmail(){
   document.sheet(mutedSheet).deleteRow(mutedEmailsArray.indexOf(toBeUnmutedEmail) + 2);
   
   addNewEmail(undefined, toBeUnmutedEmail, "unmute");
-  document.log("Email unmuted: " + toBeUnmutedEmail, "UNMUTED_COMMENTER", "timesup", "GAS");
+  document.log(toBeUnmutedEmail, "UNMUTED_COMMENTER", "timesup", "GAS");
 }
 
 function warnEmail(toBeWarnedEmail, reason, user){
   sendMail("warning", reason, toBeWarnedEmail);
-  document.log("Email warned: " + toBeWarnedEmail, "WARNED_COMMENTER", reason, user);
+  document.log(toBeWarnedEmail, "WARNED_COMMENTER", reason, user);
 }
