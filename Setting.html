@@ -3,21 +3,24 @@
   <head>
     <base target="_top">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
     <style>
+    * {
+      max-width: 260px;
+    }
     body {
       padding: 10px;
     }
     h1 {
       font-size: 40px;
     }
-    #output {
+    .output {
       margin-top: 3px;
+      font-family: "Inconsolata", monospace;
+      word-break: break-all;
     }
     form {
       padding-top: 20px;
-    }
-    .field {
-      width: 260px;
     }
     #bottom-text {
       position: absolute;
@@ -25,6 +28,11 @@
       bottom: 5px;
     }
     </style>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
     <script>
 // Prevent forms from submitting.
 function preventFormSubmit() {
@@ -35,27 +43,70 @@ function preventFormSubmit() {
     });
   }
 }
-function onGetSpreadSheetIDSuccess(ID){
-  document.getElementById("output").innerHTML = ID;
+var propertySuccessHandler = {};
+var properties = ["SSID", "RFID", "MFID"];
+var propertyHandler = properties.forEach(function(property){
+  propertySuccessHandler[property] = function(ID){
+    onGetProperty(property, ID)
+  }
+})
+function onGetProperty(IDTYPE, ID){
+  document.getElementById(IDTYPE).innerHTML = ID;
 }
-function getSpreadSheetID(){
-  google.script.run.withSuccessHandler(onGetSpreadSheetIDSuccess).getSpreadSheetID();
+function getProperties(){
+  properties.forEach(function(property){
+    google.script.run.withSuccessHandler(propertySuccessHandler[property]).getProperty(property);
+  })
 }
+function setProperty(IDTYPE, ID){
+  google.script.run.withSuccessHandler(getProperties).setProperty(IDTYPE, ID);
+}
+
+function onLoad(){ 
+  $(".selection.dropdown").dropdown();
+}
+
 window.addEventListener('load', preventFormSubmit);
-window.addEventListener('load', getSpreadSheetID);
+window.addEventListener('load', getProperties);
+window.addEventListener('load', onLoad);
     </script>
 </head>
   <body>
     <h1>Settings</h1>
-    <p>Current Spreadsheet ID is: </p>
-    <p id="output"></p>
-    <form class="ui form" onsubmit="google.script.run.withSuccessHandler(getSpreadSheetID).setSpreadSheetID(this.SSID.value);">
+    <div class="ui segments">
+      <div class="ui segment">
+        <h4 class="ui header">Current Spreadsheet ID: </h4>
+        <p class="output" id="SSID"></p>
+      </div>
+      <div class="ui segment">
+        <h4 class="ui header">Current Response Form ID: </h4>
+        <p class="output" id="RFID"></p>
+      </div>
+      <div class="ui segment">
+        <h4 class="ui header">Current Moderation Form ID: </h4>
+        <p class="output" id="MFID"></p>
+      </div>
+    </div>
+    <form class="ui form" onsubmit="setProperty(this.IDTYPE.value, this.ID.value);">
       <div class="field">
-        <label for="SSID">Set the SpreadSheet ID</label>
-        <input type="text" name="SSID" placeholder="Spreadsheet ID"/>
+        <label>Set/Change the ID</label>
+        <div class="ui selection dropdown">
+          <input required type="hidden" name="IDTYPE">
+          <i class="dropdown icon"></i>
+          <div class="default text">ID Type</div>
+          <div class="menu">
+            <div class="item" data-value="SSID">SpreadSheet ID</div>
+            <div class="item" data-value="RFID">Response Form ID</div>
+            <div class="item" data-value="MFID">Moderation Form ID</div>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <input pattern=".{44}" required type="text" name="ID" placeholder="ID"/>
       </div>
       <input type="submit" value="Set Form Spreadsheet" class="ui primary button"/>
     </form>
+
     <div id="bottom-text">
       <p>Created by <a href="https://github.com/thebrucecgit/">Bruce C</a></p>
     </div>

@@ -17,8 +17,6 @@ var information = {
 }
 
 function debug(){
-  PropertiesService.getDocumentProperties().setProperty("RFID", "1gVDfUcLlldFGU7O5EDlq6NlIJUspm8CR0aGnrbVRtxI");
-  PropertiesService.getDocumentProperties().setProperty("DocName", "Wilbur ARG");
 }
 
 function buildTriggers(){
@@ -37,11 +35,11 @@ function buildTriggers(){
 function getProperty(propertyType){
   var ID = PropertiesService.getDocumentProperties().getProperty(propertyType);
   if(ID) return ID;
-  return "File is not bound";
+  return "ID not found";
 }
 
 function setProperty(propertyType, ID){
   var ui = document.ui();
   PropertiesService.getDocumentProperties().setProperty(propertyType, ID);
-  ui.alert("SpreadSheet was bounded to the document", ui.ButtonSet.OK);
+  ui.alert(propertyType+" was bounded to the document", ui.ButtonSet.OK);
 }

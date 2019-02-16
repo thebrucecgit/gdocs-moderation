@@ -18,7 +18,7 @@ function onOpen() {
 
 function modHandler(e){
   var responses = e.response.getItemResponses();
-  var moderator = responses[0].getResponse(), offender = responses[1].getResponse(), reason = responses[3].getResponse(), time = responses[4].getResponse();
+  var moderator = responses[0].getResponse(), offender = responses[1].getResponse(), reason = responses[4].getResponse(), time = responses[3].getResponse();
   switch(responses[2].getResponse()) { // responses[2] is the action to be taken
     case "Remove/Kick": 
     removeEmail(offender, reason, moderator, false);
