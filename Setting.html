@@ -43,20 +43,14 @@ function preventFormSubmit() {
     });
   }
 }
-var propertySuccessHandler = {};
-var properties = ["SSID", "RFID", "MFID"];
-var propertyHandler = properties.forEach(function(property){
-  propertySuccessHandler[property] = function(ID){
-    onGetProperty(property, ID)
+function propertySuccessHandler(idArray){
+  var properties = ["SSID", "RFID", "MFID"];
+  for (var i = 0; i < idArray.length; i++){
+    document.getElementById(properties[i]).innerHTML = idArray[i];
   }
-})
-function onGetProperty(IDTYPE, ID){
-  document.getElementById(IDTYPE).innerHTML = ID;
 }
 function getProperties(){
-  properties.forEach(function(property){
-    google.script.run.withSuccessHandler(propertySuccessHandler[property]).getProperty(property);
-  })
+  google.script.run.withSuccessHandler(propertySuccessHandler).getAllIds();
 }
 function setProperty(IDTYPE, ID){
   google.script.run.withSuccessHandler(getProperties).setProperty(IDTYPE, ID);
@@ -72,7 +66,7 @@ window.addEventListener('load', onLoad);
     </script>
 </head>
   <body>
-    <h1>Settings</h1>
+    <h1>Settings <i class="cogs icon"></i></h1>
     <div class="ui segments">
       <div class="ui segment">
         <h4 class="ui header">Current Spreadsheet ID: </h4>
@@ -104,8 +98,10 @@ window.addEventListener('load', onLoad);
       <div class="field">
         <input pattern=".{44}" required type="text" name="ID" placeholder="ID"/>
       </div>
-      <input type="submit" value="Set Form Spreadsheet" class="ui primary button"/>
+      <input type="submit" value="Set ID" class="ui primary button"/>
     </form>
+    <div class="ui divider"></div>
+    <input type="submit" value="Load/Reload Triggers" class="ui primary basic button" onclick="google.script.run.buildTriggers()">
 
     <div id="bottom-text">
       <p>Created by <a href="https://github.com/thebrucecgit/">Bruce C</a></p>
