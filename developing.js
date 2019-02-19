@@ -17,6 +17,7 @@ var information = {
 }
 
 function debug(){
+  addNewEmail(undefined, "august.emmet@gmail.com", "Server error", "brucecccccc@gmail.com")
 }
 
 function buildTriggers(){
@@ -62,6 +63,5 @@ function getAllIds(){
   IDTYPES.forEach(function(id){
     ids.push(getProperty(id));
   })
-  console.log(ids);
   return ids;
 }

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+    <style>
+    * {
+      max-width: 280px;
+    }
+    body {
+      padding: 10px;
+    }
+    h1 {
+      font-size: 40px;
+    }
+    p {
+        margin-bottom: 0.4em;
+    }
+    #bottom-text {
+      position: relative;
+      left: 5px;
+      bottom: 5px;
+    }
+    .loading p {
+      margin: 60px 0;
+    }
+    </style>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+    <script>
+// Prevent forms from submitting.
+function preventFormSubmit() {
+  var forms = document.querySelectorAll('form');
+  for (var i = 0; i < forms.length; i++) {
+    forms[i].addEventListener('submit', function(event) {
+      event.preventDefault();
+    });
+  }
+}
+window.addEventListener('load', preventFormSubmit);
+function fetchUserDetails(userEmail){
+    document.getElementById("userHistory").innerHTML="<div class='ui loading segment'><p></p></div>";
+    google.script.run.withSuccessHandler(onFetchUserDetails).userDetails(userEmail);
+}
+function onFetchUserDetails(details){
+    var colours = {
+      ADD_COMMENTER: "blue",
+      BANNED_COMMENTER: "red",
+      REMOVE_COMMENTER: "yellow",
+      MUTED_COMMENTER: "orange",
+      UNMUTED_COMMENTER: "teal",
+      WARNED_COMMENTER: "grey"
+    }
+    var historyHTML = [];
+    details.history.forEach(function(history){
+      historyHTML.push("<div class='ui segment "+ colours[history[2]] +"'>");
+      historyHTML.push("<h4 class='ui header'>" + history[0] + "</h4>");
+      historyHTML.push("<p class='action'>" + "Action: " + history[2] + "</p>");
+      historyHTML.push("<p class='reason'>" + "Reason: " + history[3] + "</p>");
+      historyHTML.push("<p class='mod'>" + "Mod: " + history[4] + "</p>");
+      historyHTML.push("</div>")
+    })
+    document.getElementById("userDetails").innerHTML = "<p>" + details.firstJoin + "</p>";
+    document.getElementById("userHistory").innerHTML = historyHTML.join("");
+}
+    </script>
+</head>
+  <body>
+    <h1 class="ui header">User Details <i class="user icon"></i></h1>
+    <form class="ui form" onsubmit="fetchUserDetails(this.userEmail.value);">
+      <div class="field">
+        <label for="userEmail">User's Email</label>
+        <input required type="email" name="userEmail" placeholder="eg. thebrucecemail@gmail.com"/>
+      </div>
+      <input type="submit" value="Find User Details" class="ui primary button"/>
+    </form>
+    <div class="ui divider"></div>
+    <div id="userDetails">
+      <h3 class="ui header">First Joined: </h3>
+      <p></p>
+      <h3 class="ui header">Discord Username: </h3>
+      <p></p>
+      <h3 class="ui header">Notes: </h3>
+      <p></p>
+    </div>
+    <div id = "userHistory" class="ui segments">
+        <div class="ui segment">
+            <h4 class="ui header">User Information Will Appear Here</h4>
+        </div>
+    </div>
+    <div id="bottom-text">
+      <p>Created by <a href="https://github.com/thebrucecgit/">Bruce C</a></p>
+    </div>
+  </body>
+</html>

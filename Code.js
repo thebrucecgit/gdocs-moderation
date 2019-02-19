@@ -13,6 +13,7 @@ function getArrayFromValue(retrievedData){
 function onOpen() {
   document.ui().createMenu('Docs Mod')
     .addItem('Settings', 'showSettings')
+    .addItem("User Details", "showUserDetails")
     .addToUi();
 }
 
@@ -36,7 +37,8 @@ function modHandler(e){
 }
 
 function addNewEmail(e, toBeAddedEmail, reason){
-  var email = e.response.getItemResponses()[0].getResponse(),
+  var email = toBeAddedEmail;
+  if(e) email = e.response.getItemResponses()[0].getResponse();
   bannedEmailsSheet = document.sheet(bannedSheet),
   bannedEmailsArray = getArrayFromValue(bannedEmailsSheet.getRange(2, 2, bannedEmailsSheet.getLastRow()).getValues()),
   mutedEmailsSheet = document.sheet(mutedSheet),
@@ -121,4 +123,27 @@ function unmuteEmail(){
 function warnEmail(toBeWarnedEmail, reason, user){
   sendMail("warning", reason, toBeWarnedEmail);
   document.log(toBeWarnedEmail, "WARNED_COMMENTER", reason, user);
+}
+
+function userDetails(userEmail){
+  var details = {
+    currentAccess: true,
+    firstJoin: "",
+    history: []
+  }
+  var alreadyAddedEmailsSheet = document.sheet(addedSheet);
+  var addedEmails = alreadyAddedEmailsSheet.getRange(2, 1, alreadyAddedEmailsSheet.getLastRow()).getValues();
+  if (getArrayFromValue(addedEmails).indexOf(userEmail) === -1) details.currentAccess = false;  
+  var logsSheet = document.sheet(logSheet),
+  allLogs = logsSheet.getRange(2, 1, logsSheet.getLastRow() - 1, 5).getValues();
+  allLogs.forEach(function(log){
+    if(log[1] === userEmail) details.history.push(log);
+  });
+  console.log(details.history.slice(-1)[0][2]);
+  if(details.history.slice(-1)[0][2] == "ADD_COMMENTER"){
+    details.firstJoin = details.history.slice(-1)[0][0];
+  } else {
+    details.firstJoin = "UNKNOWN – sometime before February 8th";
+  }
+  return details;
 }
