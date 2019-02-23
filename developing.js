@@ -17,6 +17,7 @@ var information = {
 }
 
 function debug(){
+  sendMail("warning", "test", "brucecccccc@gmail.com");
 }
 
 function buildTriggers(){
