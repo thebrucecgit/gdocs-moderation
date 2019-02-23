@@ -17,7 +17,6 @@ var information = {
 }
 
 function debug(){
-  addNewEmail(undefined, "august.emmet@gmail.com", "Server error", "brucecccccc@gmail.com")
 }
 
 function buildTriggers(){

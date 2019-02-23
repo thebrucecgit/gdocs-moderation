@@ -2,7 +2,7 @@
 <html>
   <head>
     <base target="_top">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.7.2/dist/semantic.min.css">
     <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
     <style>
     * {
@@ -24,6 +24,9 @@
     }
     .loading p {
       margin: 60px 0;
+    }
+    #userDetails h4 {
+      margin: 5px 0;
     }
     </style>
     <script
@@ -47,7 +50,7 @@ function fetchUserDetails(userEmail){
     google.script.run.withSuccessHandler(onFetchUserDetails).userDetails(userEmail);
 }
 function onFetchUserDetails(details){
-    var colours = {
+    const colours = {
       ADD_COMMENTER: "blue",
       BANNED_COMMENTER: "red",
       REMOVE_COMMENTER: "yellow",
@@ -55,7 +58,7 @@ function onFetchUserDetails(details){
       UNMUTED_COMMENTER: "teal",
       WARNED_COMMENTER: "grey"
     }
-    var historyHTML = [];
+    let historyHTML = [];
     details.history.forEach(function(history){
       historyHTML.push("<div class='ui segment "+ colours[history[2]] +"'>");
       historyHTML.push("<h4 class='ui header'>" + history[0] + "</h4>");
@@ -64,7 +67,14 @@ function onFetchUserDetails(details){
       historyHTML.push("<p class='mod'>" + "Mod: " + history[4] + "</p>");
       historyHTML.push("</div>")
     })
-    document.getElementById("userDetails").innerHTML = "<p>" + details.firstJoin + "</p>";
+    let userDetails = 
+      "<h4 class='ui header'>First Joined: </h4>" +
+      "<p>" + details.firstJoin + "</p>" +
+      "<h4 class='ui header'>Discord Username: </h4>" +
+      "<p>" + details.discordUsername + "</p>" +
+      "<h4 class='ui header'>Notes: </h4>" +
+      "<p>" + details.notes + "</p>";
+    document.getElementById("userDetails").innerHTML = userDetails;
     document.getElementById("userHistory").innerHTML = historyHTML.join("");
 }
     </script>
@@ -80,12 +90,7 @@ function onFetchUserDetails(details){
     </form>
     <div class="ui divider"></div>
     <div id="userDetails">
-      <h3 class="ui header">First Joined: </h3>
-      <p></p>
-      <h3 class="ui header">Discord Username: </h3>
-      <p></p>
-      <h3 class="ui header">Notes: </h3>
-      <p></p>
+
     </div>
     <div id = "userHistory" class="ui segments">
         <div class="ui segment">

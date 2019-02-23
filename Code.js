@@ -129,6 +129,8 @@ function userDetails(userEmail){
   var details = {
     currentAccess: true,
     firstJoin: "",
+    discordUsername: "",
+    notes: "",
     history: []
   }
   var alreadyAddedEmailsSheet = document.sheet(addedSheet);
@@ -139,11 +141,18 @@ function userDetails(userEmail){
   allLogs.forEach(function(log){
     if(log[1] === userEmail) details.history.push(log);
   });
-  console.log(details.history.slice(-1)[0][2]);
-  if(details.history.slice(-1)[0][2] == "ADD_COMMENTER"){
+  if(details.history.length > 0 && details.history.slice(-1)[0][2] == "ADD_COMMENTER"){
     details.firstJoin = details.history.slice(-1)[0][0];
   } else {
     details.firstJoin = "UNKNOWN – sometime before February 8th";
   }
+  var rs = document.sheet(formResponse)
+  var rsValues = rs.getRange(2, 2, rs.getLastRow(), 5).getValues();
+  rsValues.forEach(function(value){
+    if(value[0] === userEmail){
+      value[1] !== "" ? details.discordUsername = value[1] : details.discordUsername = "NONE";
+      value[4] !== "" ? details.notes = value[4] : details.notes = "NONE";
+    }
+  });
   return details;
 }
