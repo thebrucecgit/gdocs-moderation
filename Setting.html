@@ -1,69 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <base target="_top">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.7.2/dist/semantic.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
-    <style>
-    * {
-      max-width: 260px;
-    }
-    body {
-      padding: 10px;
-    }
-    h1 {
-      font-size: 40px;
-    }
-    .output {
-      margin-top: 3px;
-      font-family: "Inconsolata", monospace;
-      word-break: break-all;
-    }
-    form {
-      padding-top: 20px;
-    }
-    #bottom-text {
-      position: relative;
-      left: 5px;
-      bottom: 5px;
-    }
-    </style>
-    <script
-      src="https://code.jquery.com/jquery-3.3.1.min.js"
-      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-      crossorigin="anonymous"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
-    <script>
-// Prevent forms from submitting.
-function preventFormSubmit() {
-  var forms = document.querySelectorAll('form');
-  for (var i = 0; i < forms.length; i++) {
-    forms[i].addEventListener('submit', function(event) {
-      event.preventDefault();
-    });
-  }
-}
-function propertySuccessHandler(idArray){
-  var properties = ["SSID", "RFID", "MFID"];
-  for (var i = 0; i < idArray.length; i++){
-    document.getElementById(properties[i]).innerHTML = idArray[i];
-  }
-}
-function getProperties(){
-  google.script.run.withSuccessHandler(propertySuccessHandler).getAllIds();
-}
-function setProperty(IDTYPE, ID){
-  google.script.run.withSuccessHandler(getProperties).setProperty(IDTYPE, ID);
-}
-
-function onLoad(){ 
-  $(".selection.dropdown").dropdown();
-}
-
-window.addEventListener('load', preventFormSubmit);
-window.addEventListener('load', getProperties);
-window.addEventListener('load', onLoad);
-    </script>
+    <?!= include("partials/header"); ?>
+    <?!= include("scripts/SettingJS"); ?>
+    <?!= include("styles/mainCSS.html"); ?>
 </head>
   <body>
     <h1>Settings <i class="cogs icon"></i></h1>
@@ -81,7 +21,7 @@ window.addEventListener('load', onLoad);
         <p class="output" id="MFID"></p>
       </div>
     </div>
-    <form class="ui form" onsubmit="setProperty(this.IDTYPE.value, this.ID.value);">
+    <form id="settingsForm" class="ui form" onsubmit="setProperty(this.IDTYPE.value, this.ID.value);">
       <div class="field">
         <label>Set/Change the ID</label>
         <div class="ui selection dropdown">

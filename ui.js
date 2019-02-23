@@ -7,18 +7,23 @@
 // }
 
 function showSettings(){
-    var html = HtmlService.createHtmlOutputFromFile("Setting")
+    var html = HtmlService.createTemplateFromFile("Setting")
+        .evaluate()
         .setTitle("Settings")
-        .setWidth(300);
     document.ui().showSidebar(html);
 }
 
 function showUserDetails(){
-    var html = HtmlService.createHtmlOutputFromFile("userDetails")
+    var html = HtmlService.createTemplateFromFile("userDetails")
+        .evaluate()
         .setTitle("User Details")
-        .setWidth(530);
     document.ui().showSidebar(html);
 }
 function doGet(){
     return HtmlService.createHtmlOutputFromFile("Setting");
+}
+
+function include(filename) {
+    return HtmlService.createHtmlOutputFromFile(filename)
+        .getContent();
 }

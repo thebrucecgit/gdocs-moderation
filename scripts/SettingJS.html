@@ -1,0 +1,31 @@
+<script>
+// Prevent forms from submitting.
+function preventFormSubmit() {
+  var forms = document.querySelectorAll('form');
+  for (var i = 0; i < forms.length; i++) {
+    forms[i].addEventListener('submit', function(event) {
+      event.preventDefault();
+    });
+  }
+}
+function propertySuccessHandler(idArray){
+  var properties = ["SSID", "RFID", "MFID"];
+  for (var i = 0; i < idArray.length; i++){
+    document.getElementById(properties[i]).innerHTML = idArray[i];
+  }
+}
+function getProperties(){
+  google.script.run.withSuccessHandler(propertySuccessHandler).getAllIds();
+}
+function setProperty(IDTYPE, ID){
+  google.script.run.withSuccessHandler(getProperties).setProperty(IDTYPE, ID);
+}
+
+function onLoad(){ 
+  $(".selection.dropdown").dropdown();
+}
+
+window.addEventListener('load', preventFormSubmit);
+window.addEventListener('load', getProperties);
+window.addEventListener('load', onLoad);
+</script>

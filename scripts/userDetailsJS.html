@@ -1,0 +1,44 @@
+<script>
+// Prevent forms from submitting.
+function preventFormSubmit() {
+  var forms = document.querySelectorAll('form');
+  for (var i = 0; i < forms.length; i++) {
+    forms[i].addEventListener('submit', function(event) {
+      event.preventDefault();
+    });
+  }
+}
+window.addEventListener('load', preventFormSubmit);
+function fetchUserDetails(userEmail){
+    document.getElementById("userHistory").innerHTML="<div class='ui loading segment'><p></p></div>";
+    google.script.run.withSuccessHandler(onFetchUserDetails).userDetails(userEmail);
+}
+function onFetchUserDetails(details){
+    const colours = {
+      ADD_COMMENTER: "blue",
+      BANNED_COMMENTER: "red",
+      REMOVE_COMMENTER: "yellow",
+      MUTED_COMMENTER: "orange",
+      UNMUTED_COMMENTER: "teal",
+      WARNED_COMMENTER: "grey"
+    }
+    let historyHTML = [];
+    details.history.forEach(function(history){
+      historyHTML.push("<div class='ui segment "+ colours[history[2]] +"'>");
+      historyHTML.push("<h4 class='ui header'>" + history[0] + "</h4>");
+      historyHTML.push("<p class='action'>" + "Action: " + history[2] + "</p>");
+      historyHTML.push("<p class='reason'>" + "Reason: " + history[3] + "</p>");
+      historyHTML.push("<p class='mod'>" + "Mod: " + history[4] + "</p>");
+      historyHTML.push("</div>")
+    })
+    let userDetails = 
+      "<h4 class='ui header'>First Joined: </h4>" +
+      "<p>" + details.firstJoin + "</p>" +
+      "<h4 class='ui header'>Discord Username: </h4>" +
+      "<p>" + details.discordUsername + "</p>" +
+      "<h4 class='ui header'>Notes: </h4>" +
+      "<p>" + details.notes + "</p>";
+    document.getElementById("userDetails").innerHTML = userDetails;
+    document.getElementById("userHistory").innerHTML = historyHTML.join("");
+}
+</script>
