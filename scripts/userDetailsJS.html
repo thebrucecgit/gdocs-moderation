@@ -32,6 +32,8 @@ function onFetchUserDetails(details){
       historyHTML.push("</div>")
     })
     let userDetails = 
+      "<h4 class='ui header'>Current Access: </h4>" +
+      "<p>" + currentAccess(details.currentAccess) + "</p>" +
       "<h4 class='ui header'>First Joined: </h4>" +
       "<p>" + details.firstJoin + "</p>" +
       "<h4 class='ui header'>Discord Username: </h4>" +
@@ -40,5 +42,12 @@ function onFetchUserDetails(details){
       "<p>" + details.notes + "</p>";
     document.getElementById("userDetails").innerHTML = userDetails;
     document.getElementById("userHistory").innerHTML = historyHTML.join("");
+}
+function currentAccess(access) {
+  if(access){
+    return "Commenting or Editing";
+  } else {
+    return "None";
+  }
 }
 </script>

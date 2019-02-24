@@ -140,7 +140,11 @@ function userDetails(userEmail){
   allLogs = logsSheet.getRange(2, 1, logsSheet.getLastRow() - 1, 5).getValues();
   allLogs.forEach(function(log){
     if(log[1] === userEmail) details.history.push(log);
-  });
+	});
+	var access = ["REMOVE_COMMENTER", "BANNED_COMMENTER", "MUTED_COMMENTER"];
+	if(details.history.length > 0 && access.indexOf(details.history[0]) !== -1) {
+		details.currentAccess = false;
+	}
   if(details.history.length > 0 && details.history.slice(-1)[0][2] == "ADD_COMMENTER"){
     details.firstJoin = details.history.slice(-1)[0][0];
   } else {
