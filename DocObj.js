@@ -7,11 +7,19 @@ var document = {
     return SpreadsheetApp.openById(getProperty("SSID")).getSheetByName(name);
   },
   addCommenters: function(emails){
-    console.log("addCommenters: " + JSON.stringify(emails));
-    document.doc().addCommenters(emails);
+    try {
+      console.log("addCommenters: " + JSON.stringify(emails));
+      document.doc().addCommenters(emails);
+    } catch(err) {
+      console.error(err);
+    }
   },
   removeCommenter: function(email){
-    document.doc().removeCommenter(email);
+    try {
+      document.doc().removeCommenter(email);
+    } catch(err) {
+      console.error(err);
+    }
   },
   log: function(log, type, reason, user){
     var val = [new Date().toLocaleString('en-GB',{timeZone: 'UTC'}), log, type, reason, user || Session.getEffectiveUser().getEmail()];
