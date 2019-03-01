@@ -29,3 +29,14 @@ var document = {
     return DocumentApp.getUi();
   }
 }
+
+function isMod(mod){
+  var alreadyAddedSheet = document.sheet(addedSheet);
+  var values = alreadyAddedSheet.getRange(2, 1, alreadyAddedSheet.getLastRow()-1, 2).getValues();
+  var mods = [];
+  values.forEach(function(value){
+    if(value[1] === "Mod") mods.push(value[0]);
+  });
+  if(mods.indexOf(mod) !== -1) return true;
+  return false;
+}

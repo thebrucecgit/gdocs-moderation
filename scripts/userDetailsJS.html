@@ -38,6 +38,8 @@ function onFetchUserDetails(details){
       "<p>" + details.firstJoin + "</p>" +
       "<h4 class='ui header'>Discord Username: </h4>" +
       "<p>" + details.discordUsername + "</p>" +
+      "<h4 class='ui header'>Mod: </h4>" +
+      "<p>" + details.mod.toString().toUpperCase() + "</p>" +
       "<h4 class='ui header'>Notes: </h4>" +
       "<p>" + details.notes + "</p>";
     document.getElementById("userDetails").innerHTML = userDetails;

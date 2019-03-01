@@ -20,6 +20,10 @@ function onOpen() {
 function modHandler(e){
   var responses = e.response.getItemResponses();
   var moderator = responses[0].getResponse(), offender = responses[1].getResponse(), reason = responses[4].getResponse(), time = responses[3].getResponse();
+  if(!isMod(moderator)){
+    console.log("Moderation form action was denied as " + moderator + " is not listed as a Moderator");
+    return;
+  };
   switch(responses[2].getResponse()) { // responses[2] is the action to be taken
     case "Remove/Kick": 
     removeEmail(offender, reason, moderator, false);
@@ -128,28 +132,43 @@ function warnEmail(toBeWarnedEmail, reason, user){
 function userDetails(userEmail){
   var details = {
     currentAccess: true,
+    mod: false,
     firstJoin: "",
     discordUsername: "",
     notes: "",
     history: []
   }
   var alreadyAddedEmailsSheet = document.sheet(addedSheet);
-  var addedEmails = alreadyAddedEmailsSheet.getRange(2, 1, alreadyAddedEmailsSheet.getLastRow()).getValues();
-  if (getArrayFromValue(addedEmails).indexOf(userEmail) === -1) details.currentAccess = false;  
+  // Check for current access and if user is a moderator through currently added emails sheet
+  var addedEmails = alreadyAddedEmailsSheet.getRange(2, 1, alreadyAddedEmailsSheet.getLastRow(), 2).getValues();
+  var currentAccessUsers = [];
+  addedEmails.forEach(function(value){
+    currentAccessUsers.push(value[0]);
+    if(value[0] === userEmail && value[1] === "Mod") details.mod = true;
+  })
+  if(currentAccessUsers.indexOf(userEmail) === -1) details.currentAccess = false;
+  
+  // Get all logs for user
   var logsSheet = document.sheet(logSheet),
   allLogs = logsSheet.getRange(2, 1, logsSheet.getLastRow() - 1, 5).getValues();
   allLogs.forEach(function(log){
     if(log[1] === userEmail) details.history.push(log);
-	});
+  });
+
+  // Check for current access (again) through the logs this time
 	var access = ["REMOVE_COMMENTER", "BANNED_COMMENTER", "MUTED_COMMENTER"];
 	if(details.history.length > 0 && access.indexOf(details.history[0]) !== -1) {
 		details.currentAccess = false;
-	}
+  }
+
+  // Get first joined date through logs
   if(details.history.length > 0 && details.history.slice(-1)[0][2] == "ADD_COMMENTER"){
     details.firstJoin = details.history.slice(-1)[0][0];
   } else {
     details.firstJoin = "UNKNOWN – sometime before February 8th";
   }
+
+  // Get notes and discord username
   var rs = document.sheet(formResponse)
   var rsValues = rs.getRange(2, 2, rs.getLastRow(), 5).getValues();
   rsValues.forEach(function(value){
@@ -158,5 +177,6 @@ function userDetails(userEmail){
       value[4] !== "" ? details.notes = value[4] : details.notes = "NONE";
     }
   });
+
   return details;
 }
