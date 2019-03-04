@@ -30,7 +30,9 @@ function buildTriggers(){
   }
   var currentTriggers = ScriptApp.getProjectTriggers();
   currentTriggers.forEach(function(trigger){
-    ScriptApp.deleteTrigger(trigger);
+    if(trigger.getEventType() === ScriptApp.EventType.ON_FORM_SUBMIT) {
+      ScriptApp.deleteTrigger(trigger);
+    }
   });
   var requestForm = FormApp.openById(RFID);
   ScriptApp.newTrigger('addNewEmail')
