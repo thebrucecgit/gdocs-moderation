@@ -6,12 +6,19 @@ var document = {
   sheet: function(name){
     return SpreadsheetApp.openById(getProperty("SSID")).getSheetByName(name);
   },
-  addCommenters: function(emails){
+  addCommenter: function(email, addCommenterRetry){
     try {
-      console.log("addCommenters: " + JSON.stringify(emails));
-      document.doc().addCommenters(emails);
+      console.log("Add Commenter: " + email);
+      // throw "error for testing";
+      document.doc().addCommenter(email);
+      if(addCommenterRetry){
+        deleteTrigger(addCommenterRetry)
+      }
+      return true;
     } catch(err) {
-      console.error(err);
+      console.error("Failed to add commenter: ", err);
+      onFailure(email, addCommenterRetry);
+      return false;
     }
   },
   removeCommenter: function(email){
@@ -39,4 +46,52 @@ function isMod(mod){
   });
   if(mods.indexOf(mod) !== -1) return true;
   return false;
+}
+
+function onFailure(newRetry, addCommenterRetry){
+  if(addCommenterRetry && addCommenterRetry.attempt >= 3) {
+    console.error("Attempted to add " + addCommenterRetry.email + " more than 3 times without success");
+    deleteTrigger(addCommenterRetry);
+    return;
+  }
+  var newEmail = {
+    email: newRetry,
+    attempt:  1,
+    triggerid: undefined
+  }
+  if(addCommenterRetry) {
+    newEmail.attempt = addCommenterRetry.attempt + 1;
+    newEmail.triggerid = addCommenterRetry.triggerid;
+  }
+  if(!addCommenterRetry){ // If new
+    var trigger = ScriptApp.newTrigger("addCommenterRetry")
+      .timeBased()
+      .everyMinutes(5) // Will run every five minutes until deleted
+      .create();
+    newEmail.triggerid = trigger.getUniqueId();
+  }
+  PropertiesService.getDocumentProperties().setProperty(newEmail.triggerid, JSON.stringify(newEmail));
+  console.log("Attempt No " + newEmail.attempt + " for " + newEmail.email);
+}
+
+function addCommenterRetry(e) {
+  var triggerid = e.triggerUid,
+  emailObj = JSON.parse(PropertiesService.getDocumentProperties().getProperty(triggerid)),
+  email = emailObj.email,
+  attempt = emailObj.attempt;
+  addNewEmail(undefined, email, "Retrying adding email for (" + attempt + ") times", emailObj);
+}
+
+function deleteTrigger(addCommenterRetry){
+  // Loops through, finds the repeating trigger and deletes it
+  var triggers = ScriptApp.getProjectTriggers();
+  for (var i = 0; i < triggers.length; i++) { 
+    if (triggers[i].getUniqueId() === addCommenterRetry.triggerid){
+      ScriptApp.deleteTrigger(triggers[i]);
+      break;
+    }
+  }
+  // Delete property from PropertiesService
+  PropertiesService.getDocumentProperties().deleteProperty(addCommenterRetry.triggerid); 
+  console.log("Deleted recurring trigger for " + addCommenterRetry.email + " and its properties successfully");
 }

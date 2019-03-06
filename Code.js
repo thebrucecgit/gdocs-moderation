@@ -40,7 +40,7 @@ function modHandler(e){
   }
 }
 
-function addNewEmail(e, toBeAddedEmail, reason){
+function addNewEmail(e, toBeAddedEmail, reason, addCommenterRetry){
   var email = toBeAddedEmail;
   if(e) email = e.response.getItemResponses()[0].getResponse();
   bannedEmailsSheet = document.sheet(bannedSheet),
@@ -60,10 +60,11 @@ function addNewEmail(e, toBeAddedEmail, reason){
     return; 
   }
   if (alreadyAddedEmailsArray.indexOf(email) >= 0) return; // If user already has access
-  document.addCommenters([email]);
-  alreadyAddedEmailsSheet.appendRow([email]);
-  if(reason === "unmute") return;
-  document.log(email, "ADD_COMMENTER", reason || "auto", "GAS");  
+  if(document.addCommenter(email, addCommenterRetry)){
+    alreadyAddedEmailsSheet.appendRow([email]);
+    if(reason === "unmute") return;
+    document.log(email, "ADD_COMMENTER", reason || "auto", "GAS"); 
+  } 
 }
 
 function removeEmail(toBeRemovedEmail, reason, user, ban){
