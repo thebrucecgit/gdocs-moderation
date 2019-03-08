@@ -44,8 +44,16 @@ function isMod(mod){
   values.forEach(function(value){
     if(value[1] === "Mod") mods.push(value[0]);
   });
-  if(mods.indexOf(mod) !== -1) return true;
+  if(mods.indexOf(mod || Session.getActiveUser().getEmail()) !== -1) return true;
   return false;
+}
+
+function isSetup() {
+  var ids = ["SSID", "MFID", "RFID", "DocName"];
+  ids.forEach(function(id){
+    if(!PropertiesService.getDocumentProperties().getProperty(id)) return false;
+  })
+  return true;
 }
 
 function onFailure(newRetry, addCommenterRetry){
@@ -94,4 +102,22 @@ function deleteTrigger(addCommenterRetry){
   // Delete property from PropertiesService
   PropertiesService.getDocumentProperties().deleteProperty(addCommenterRetry.triggerid); 
   console.log("Deleted recurring trigger for " + addCommenterRetry.email + " and its properties successfully");
+}
+
+function ui(func){
+  var ui = document.ui();
+  switch(func) {
+    case "isMod":
+      if(!isMod()) {
+        ui.alert("You do not have permissions to see this", ui.ButtonSet.OK);
+        return false;
+      }
+      return true;
+    case "isSetup":
+      if(!isSetup()) {
+        ui.alert("Setup is incomplete, please go to Settings", ui.ButtonSet.OK);
+        return false;
+      }
+      return true;
+  }
 }

@@ -8,7 +8,10 @@ function preventFormSubmit() {
     });
   }
 }
-window.addEventListener('load', preventFormSubmit);
+function onLoad(){
+  preventFormSubmit();
+}
+window.addEventListener('load', onLoad);
 function fetchUserDetails(userEmail){
     document.getElementById("userHistory").innerHTML="<div class='ui loading segment'><p></p></div>";
     google.script.run.withSuccessHandler(onFetchUserDetails).userDetails(userEmail);
