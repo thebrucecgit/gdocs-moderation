@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <?!= include("partials/header"); ?>
+    <?!= include("scripts/adminConsoleJS"); ?>
+    <?!= include("styles/mainCSS"); ?>
+  </head>
+  <body>
+    <h1>Admin <i class="tools icon"></i></h1>
+    <p>To add or change permissions for users. Clicking <span class="ui red text">Delete all perms</span> will remove all permissions for that user.</p>
+    <form class="ui form" onsubmit="setUserPermission(this.Email.value, this.Perm.value);">
+      <h5>Set Permission for New User: </h5>
+      <div class="field">
+        <input id="margin-bottom" type="email" name="Email" placeholder="eg. thebrucecemail@gmail.com"/>
+        <div class="ui selection dropdown">
+          <input type="hidden" name="Perm">
+          <i class="dropdown icon"></i>
+          <div class="default text">Select Permission</div>
+          <div class="menu">
+            <div class="item" data-value="Mod">Mod</div>
+            <div class="item" data-value="Editor">Editor</div>
+          </div>
+        </div>
+      </div>
+      <button onclick="setUserPermission(undefined, undefined, this)" value="Save" class="ui primary button">Save</button>
+      <button onclick="setUserPermission(undefined, undefined, this)" value="Delete" class="ui negative basic button">Delete all perms</button>
+    </form>
+    
+    <div class="ui segments">
+        <div class="ui loading segment">
+            <p></p>
+        </div>
+        <!-- <div class="ui grid segment">
+            <div class="ten wide column">brucecccccc@gmail.com</div>
+            <div class="three wide column">Editor</div>
+            <div class="three wide column"><a><i class="edit outline icon"></a></i></div>
+            <div class="ui form transition hidden">
+                <form class="ui form" onsubmit="google.script.run.withSuccessHandler(onSetUserPermission).setUserPermission(this.Email.value, this.Perm.value);">
+                    <div class="field">
+                        <input type="hidden" value="brucecccccc@gmail.com" name="Email" />
+                        <div class="ui fluid selection dropdown">
+                            <input required type="hidden" name="Perm" value="Mod">
+                            <i class="dropdown icon"></i>
+                            <div class="default text">Select Permission</div>
+                            <div class="menu">
+                                <div class="item" data-value="Mod">Mod</div>
+                                <div class="item" data-value="Editor">Editor</div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="submit" value="Save" class="ui primary button"/>
+                </form>
+            </div>
+        </div> -->
+    </div>
+
+    <?!= include("partials/footer"); ?>
+  </body>
+</html>

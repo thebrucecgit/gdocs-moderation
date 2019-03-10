@@ -6,7 +6,7 @@
     <?!= include("styles/mainCSS"); ?>
   </head>
   <body>
-    <h1 class="ui header">User Details <i class="user icon"></i></h1>
+    <h1>User Details <i class="user icon"></i></h1>
     <form class="ui form" onsubmit="fetchUserDetails(this.userEmail.value);">
       <div class="field">
         <label for="userEmail">User's Email</label>
@@ -23,8 +23,6 @@
             <h4 class="ui header">User Information Will Appear Here</h4>
         </div>
     </div>
-    <div id="bottom-text">
-      <p>Created by <a href="https://github.com/thebrucecgit/">Bruce C</a></p>
-    </div>
+    <?!= include("partials/footer"); ?>
   </body>
 </html>

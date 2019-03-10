@@ -12,8 +12,10 @@ function getArrayFromValue(retrievedData){
 // Menu & Sidebar
 function onOpen() {
   document.ui().createMenu('Docs Mod')
-    .addItem('Settings', 'showSettings')
     .addItem("User Details", "showUserDetails")
+    .addSeparator()
+    .addItem("Settings", "showSettings")
+    .addItem("Admin Console", "adminConsole")
     .addToUi();
 }
 
@@ -140,15 +142,11 @@ function userDetails(userEmail){
     history: []
   }
   var alreadyAddedEmailsSheet = document.sheet(addedSheet);
-  // Check for current access and if user is a moderator through currently added emails sheet
-  var addedEmails = alreadyAddedEmailsSheet.getRange(2, 1, alreadyAddedEmailsSheet.getLastRow(), 2).getValues();
-  var currentAccessUsers = [];
-  addedEmails.forEach(function(value){
-    currentAccessUsers.push(value[0]);
-    if(value[0] === userEmail && value[1] === "Mod") details.mod = true;
-  })
+  var addedEmails = alreadyAddedEmailsSheet.getRange(2, 1, alreadyAddedEmailsSheet.getLastRow(), 1).getValues();
+  var currentAccessUsers = getArrayFromValue(addedEmails);
   if(currentAccessUsers.indexOf(userEmail) === -1) details.currentAccess = false;
-  
+  details.mod = isMod(userEmail);
+
   // Get all logs for user
   var logsSheet = document.sheet(logSheet),
   allLogs = logsSheet.getRange(2, 1, logsSheet.getLastRow() - 1, 5).getValues();
@@ -180,4 +178,32 @@ function userDetails(userEmail){
   });
 
   return details;
+}
+function getUserPermissions(){
+  var alreadyAddedEmailsSheet = document.sheet(addedSheet),
+  alreadyAddedEmails = alreadyAddedEmailsSheet.getRange(2, 1, alreadyAddedEmailsSheet.getLastRow()-1, 2).getValues(),
+  outputEmails = [];
+  alreadyAddedEmails.forEach(function(email){
+    if(email[1].length > 0) outputEmails.push(email);
+  })
+  console.log(JSON.stringify(outputEmails))
+  return outputEmails;
+}
+function setUserPermission(email, permission, action){
+  if(!isMod()) return false;
+  var alreadyAddedEmailsSheet = document.sheet(addedSheet);
+  var addedEmails = alreadyAddedEmailsSheet.getRange(2, 1, alreadyAddedEmailsSheet.getLastRow(), 1).getValues();
+  addedEmails = getArrayFromValue(addedEmails);
+  emailLocation = addedEmails.indexOf(email)
+  if(emailLocation === -1) {
+    console.error(email + " was not found in addedEmails sheet");
+    return false;
+  }
+  console.log(action);
+  var range = alreadyAddedEmailsSheet.getRange(emailLocation+2, 2, 1, 1);
+  if(action === "Save"){
+    range.setValue(permission);
+  } else if (action === "Delete") {
+    range.clearContent();
+  }
 }

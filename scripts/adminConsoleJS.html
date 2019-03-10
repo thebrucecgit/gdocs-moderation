@@ -1,0 +1,145 @@
+<script>
+// Prevent forms from submitting.
+function preventFormSubmit() {
+    var forms = document.querySelectorAll('form');
+    for (var i = 0; i < forms.length; i++) {
+    forms[i].addEventListener('submit', function(event) {
+        event.preventDefault();
+    });
+    }
+}
+function load(){
+    document.getElementsByClassName("ui segments")[0].innerHTML = "<div class='ui loading segment'><p></p></div>";
+}
+function onLoad(){
+    preventFormSubmit();
+    $(".selection.dropdown").dropdown();
+    getUserPermissions();
+}
+var wait = [];
+function onFormSubmit(email, perm){
+    //
+}
+function setUserPermission(emailOrAction, perm, action){
+    if(emailOrAction || emailOrAction === ""){ // Email and Perms
+        wait.push([emailOrAction, perm]);
+    } else if (action) { // Action
+        wait.push(action.value);
+    } else {
+        return; // Error
+    }
+    if(wait.length % 2 === 0){
+        let newReq = wait.slice(-2);
+        let reqEmail, reqPerm, reqAction;
+        if(Array.isArray(newReq[0])){
+            reqEmail = newReq[0][0];
+            reqPerm = newReq[0][1];
+            reqAction = newReq[1];
+        } else if (Array.isArray(newReq[1])){
+            reqEmail = newReq[1][0];
+            reqPerm = newReq[1][1];
+            reqAction = newReq[0];
+        } else { return; }
+        if(!reqEmail || (!reqPerm && reqAction === "Save")) {
+            console.error("Invalid Form");
+            return;
+        }
+        load();
+        google.script.run.withSuccessHandler(getUserPermissions).setUserPermission(reqEmail, reqPerm, reqAction);
+    }
+}
+function getUserPermissions(){
+    google.script.run.withSuccessHandler(onGetUserPermissions).getUserPermissions();
+}
+function onGetUserPermissions(data) {
+    let tmp = document.createElement("div");
+    data.forEach(function(data) {
+        tmp.appendChild(newTabRow(data));
+    });
+    document.getElementsByClassName("ui segments")[0].innerHTML = tmp.innerHTML;
+    $(".selection.dropdown").dropdown();
+    preventFormSubmit();
+}
+function newTabRow(data) {
+    const email = data[0], perm = data[1];
+
+    let row = document.createElement("div");
+    row.className = "ui grid segment";
+
+    let emailCol = document.createElement("div"),
+    emailText = document.createTextNode(email);
+    emailCol.className = "ten wide column";
+    emailCol.appendChild(emailText);
+
+    let permCol = document.createElement("div"),
+    permText = document.createTextNode(perm);
+    permCol.className = "three wide column";
+    permCol.appendChild(permText);
+
+    let editCol = document.createElement("div"),
+    anchorTag = document.createElement("a"),
+    editIcon = document.createElement("i");
+    editIcon.className = "edit outline icon";
+    editCol.className = "three wide column";
+    anchorTag.appendChild(editIcon);
+    editCol.appendChild(anchorTag);
+
+    let formDiv = document.createElement("div"),
+    toggleForm = document.createElement("form"),
+    field = document.createElement("div"),
+    submitIn = document.createElement("button"),
+    deleteIn = document.createElement("button"),
+    saveBut = document.createTextNode("Save"),
+    deleteBut = document.createTextNode("Delete all perms");
+
+    formDiv.className = "ui form transition hidden";
+    toggleForm.className = "ui form";
+    toggleForm.setAttribute("onsubmit", "setUserPermission(this.Email.value, this.Perm.value);");
+    field.className = "field";
+    submitIn.className = "ui primary button";
+    submitIn.setAttribute("value", "Save");
+    submitIn.setAttribute("onclick", "setUserPermission(undefined, undefined, this);");
+    deleteIn.className = "ui negative basic button";
+    deleteIn.setAttribute("value", "Delete");
+    deleteIn.setAttribute("onclick", "setUserPermission(undefined, undefined, this);");
+
+    submitIn.appendChild(saveBut);
+    deleteIn.appendChild(deleteBut);
+    // Elements inside field
+    let hiddenIn = document.createElement("input"),
+    dropdownDiv = document.createElement("div"),
+    dropdownHidIn = document.createElement("input");
+    hiddenIn.setAttribute("type", "hidden");
+    hiddenIn.setAttribute("name", "Email");
+    hiddenIn.setAttribute("value", email);
+    dropdownDiv.className = "ui fluid selection dropdown";
+    dropdownDiv.innerHTML = "<input type='hidden' name='Perm' value='"+ perm + "'>" +
+    "<i class='dropdown icon'></i>" +
+    "<div class='default text'>Select Permission</div>" +
+    "<div class='menu'>" +
+        "<div class='item' data-value='Mod'>Mod</div>" +
+        "<div class='item' data-value='Editor'>Editor</div>" +
+    "</div>";
+
+    field.appendChild(hiddenIn);
+    field.appendChild(dropdownDiv);
+    toggleForm.appendChild(field);
+    toggleForm.appendChild(submitIn);
+    toggleForm.appendChild(deleteIn);
+    formDiv.appendChild(toggleForm);
+
+    row.appendChild(emailCol);
+    row.appendChild(permCol);
+    row.appendChild(editCol);
+    row.appendChild(formDiv);
+
+    return row;
+}
+window.addEventListener('load', onLoad);
+document.addEventListener('click', function(e){
+    if(e.target.tagName === "I") {
+        var form = e.target.parentElement.parentElement.parentElement.querySelector(".ui.form.transition");
+        $(form).transition("slide down");
+    }
+})
+</script>

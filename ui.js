@@ -20,6 +20,15 @@ function showUserDetails(){
         .setTitle("User Details")
     document.ui().showSidebar(html);
 }
+
+function adminConsole(){
+    if(!ui("isSetup")) return false;
+    var html = HtmlService.createTemplateFromFile("adminConsole")
+        .evaluate()
+        .setTitle("Admin Console");
+    document.ui().showSidebar(html);
+}
+
 function doGet(){
     return HtmlService.createHtmlOutputFromFile("Setting");
 }
