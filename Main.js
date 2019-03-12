@@ -1,16 +1,6 @@
 var formResponse = "Responses", modSheet = "Mod", addedSheet = "Added Emails", bannedSheet = "Banned Emails", mutedSheet = "Muted Emails", logSheet = "Logs";
 
-function getArrayFromValue(retrievedData){
-  var output = [];
-  retrievedData.forEach(function(data){
-    if (!data[0]) return;
-    output.push(data[0]);
-  });
-  return output;
-}
-
-// Menu & Sidebar
-function onOpen() {
+function onOpen() { // Menu & Sidebar
   document.ui().createMenu('Docs Mod')
     .addItem("User Details", "showUserDetails")
     .addSeparator()
@@ -179,6 +169,7 @@ function userDetails(userEmail){
 
   return details;
 }
+
 function getUserPermissions(){
   var alreadyAddedEmailsSheet = document.sheet(addedSheet),
   alreadyAddedEmails = alreadyAddedEmailsSheet.getRange(2, 1, alreadyAddedEmailsSheet.getLastRow()-1, 2).getValues(),
@@ -189,6 +180,7 @@ function getUserPermissions(){
   console.log(JSON.stringify(outputEmails))
   return outputEmails;
 }
+
 function setUserPermission(email, permission, action){
   if(!isMod()) return false;
   var alreadyAddedEmailsSheet = document.sheet(addedSheet);

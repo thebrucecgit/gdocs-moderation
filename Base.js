@@ -37,6 +37,15 @@ var document = {
   }
 }
 
+function getArrayFromValue(retrievedData){
+  var output = [];
+  retrievedData.forEach(function(data){
+    if (!data[0]) return;
+    output.push(data[0]);
+  });
+  return output;
+}
+
 function isMod(mod){
   var alreadyAddedSheet = document.sheet(addedSheet);
   var values = alreadyAddedSheet.getRange(2, 1, alreadyAddedSheet.getLastRow()-1, 2).getValues();
@@ -120,4 +129,50 @@ function ui(func){
       }
       return true;
   }
+}
+
+function buildTriggers(){
+  var ui = document.ui();
+  if (!getProperty(MFID) || !getProperty(RFID)) {
+    ui.alert("There are missing IDs", ui.ButtonSet.OK);
+    return;
+  }
+  var currentTriggers = ScriptApp.getProjectTriggers();
+  currentTriggers.forEach(function(trigger){
+    if(trigger.getEventType() === ScriptApp.EventType.ON_FORM_SUBMIT) {
+      ScriptApp.deleteTrigger(trigger);
+    }
+  });
+  var requestForm = FormApp.openById(RFID);
+  ScriptApp.newTrigger('addNewEmail')
+  .forForm(requestForm)
+  .onFormSubmit()
+  .create();
+  var modForm = FormApp.openById(MFID);
+  ScriptApp.newTrigger('modHandler')
+  .forForm(modForm)
+  .onFormSubmit()
+  .create();
+  ui.alert("Triggers have been installed/reinstalled", ui.ButtonSet.OK);
+}
+// SSID, RFID, MFID, DocName
+function getProperty(propertyType){
+  var ID = PropertiesService.getDocumentProperties().getProperty(propertyType);
+  if(ID) return ID;
+  return false;
+}
+
+function setProperty(propertyType, ID){
+  var ui = document.ui();
+  PropertiesService.getDocumentProperties().setProperty(propertyType, ID);
+  ui.alert(propertyType+" was bounded to the document", ui.ButtonSet.OK);
+}
+
+function getAllIds(){
+  var IDTYPES = ["SSID", "RFID", "MFID"];
+  var ids = [];
+  IDTYPES.forEach(function(id){
+    ids.push(getProperty(id));
+  })
+  return ids;
 }
