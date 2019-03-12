@@ -1,35 +1,33 @@
 <script>
-// Prevent forms from submitting.
 function preventFormSubmit() {
     var forms = document.querySelectorAll('form');
     for (var i = 0; i < forms.length; i++) {
-    forms[i].addEventListener('submit', function(event) {
-        event.preventDefault();
-    });
+        forms[i].addEventListener('submit', function(event) {
+            event.preventDefault();
+        });
     }
 }
-function load(){
-    document.getElementsByClassName("ui segments")[0].innerHTML = "<div class='ui loading segment'><p></p></div>";
+function setSegmentToLoad(){
+    let segmentsDiv = document.getElementsByClassName("ui segments")[0].innerHTML,
+    loadingHtml = "<div class='ui loading segment'><p></p></div>"
+    if (segmentsDiv !== loadingHtml) segmentsDiv = loadingHtml;
 }
 function onLoad(){
     preventFormSubmit();
     $(".selection.dropdown").dropdown();
     getUserPermissions();
 }
-var wait = [];
-function onFormSubmit(email, perm){
-    //
-}
-function setUserPermission(emailOrAction, perm, action){
-    if(emailOrAction || emailOrAction === ""){ // Email and Perms
-        wait.push([emailOrAction, perm]);
+var formEvents = []; 
+function setUserPermission(email, perm, action){
+    if(email || email === ""){ // Email and Perms
+        formEvents.push([email, perm]);
     } else if (action) { // Action
-        wait.push(action.value);
+        formEvents.push(action.value);
     } else {
         return; // Error
     }
-    if(wait.length % 2 === 0){
-        let newReq = wait.slice(-2);
+    if(formEvents.length % 2 === 0){
+        let newReq = formEvents.slice(-2);
         let reqEmail, reqPerm, reqAction;
         if(Array.isArray(newReq[0])){
             reqEmail = newReq[0][0];
@@ -44,7 +42,7 @@ function setUserPermission(emailOrAction, perm, action){
             console.error("Invalid Form");
             return;
         }
-        load();
+        setSegmentToLoad();
         google.script.run.withSuccessHandler(getUserPermissions).setUserPermission(reqEmail, reqPerm, reqAction);
     }
 }
