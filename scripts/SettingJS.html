@@ -22,10 +22,10 @@ function setProperty(IDTYPE, ID){
 }
 
 function onLoad(){ 
+  preventFormSubmit();
+  getProperties();
   $(".selection.dropdown").dropdown();
 }
 
-window.addEventListener('load', preventFormSubmit);
-window.addEventListener('load', getProperties);
 window.addEventListener('load', onLoad);
 </script>
