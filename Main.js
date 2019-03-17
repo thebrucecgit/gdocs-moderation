@@ -6,6 +6,7 @@ function onOpen() { // Menu & Sidebar
     .addSeparator()
     .addItem("Settings", "showSettings")
     .addItem("Admin Console", "adminConsole")
+    .addItem("Setup", "setupSystem")
     .addToUi();
 }
 

@@ -20,13 +20,20 @@ var information = {
 }
 
 function debug(){
-  addNewEmail(undefined, "testing123123@teuasd.com", "testing");
+  var sheet = document.sheet("Added Emails"),
+  range = sheet.getRange(1, 1, 1, 2).getValues()[0];
+  range.forEach(function(cell, i){
+    Logger.log(sheet.getColumnWidth(i + 1));
+  })
 }
 function debugtwo(something){
-  var obj = {
-    attempt: something || 1
-  }
-  Logger.log(JSON.stringify(obj));
+  var mainSS = SpreadsheetApp.openById("13pHPaIMhuOE02dBbNvOEGuT-DsI6pGWqLjzwndxsnA8");
+  var responsesSheet = mainSS.getSheetByName("Form Responses 1").setName("Responses"),
+  modSheet = mainSS.getSheetByName("Form Responses 2").setName("Mod");
+  setSheetHeader(responsesSheet, undefined, 
+    [150, 235, 301, 58, 240]);
+  setSheetHeader(modSheet, undefined,
+    [150, 150, 194, 150, 150, 95]);
 }
 function debugthree(){
   // debugtwo();

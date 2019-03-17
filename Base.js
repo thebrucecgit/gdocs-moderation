@@ -131,10 +131,11 @@ function ui(func){
   }
 }
 
-function buildTriggers(){
-  var ui = document.ui();
+function buildTriggers(confirmation){
+  if(confirmation === undefined) var confirmation = true;
+  if(!confirmation) var ui = document.ui();
   if (!getProperty(MFID) || !getProperty(RFID)) {
-    ui.alert("There are missing IDs", ui.ButtonSet.OK);
+    if(confirmation) ui.alert("There are missing IDs", ui.ButtonSet.OK);
     return;
   }
   var currentTriggers = ScriptApp.getProjectTriggers();
@@ -153,7 +154,7 @@ function buildTriggers(){
   .forForm(modForm)
   .onFormSubmit()
   .create();
-  ui.alert("Triggers have been installed/reinstalled", ui.ButtonSet.OK);
+  if(confirmation) ui.alert("Triggers have been installed/reinstalled", ui.ButtonSet.OK);
 }
 // SSID, RFID, MFID, DocName
 function getProperty(propertyType){
