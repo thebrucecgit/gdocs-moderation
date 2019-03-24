@@ -125,11 +125,12 @@ function warnEmail(toBeWarnedEmail, reason, user){
 
 function userDetails(userEmail){
   var details = {
+    email: userEmail,
     currentAccess: true,
     mod: false,
     firstJoin: "",
-    discordUsername: "",
-    notes: "",
+    discordUsername: "NONE",
+    notes: "NONE",
     history: []
   }
   var alreadyAddedEmailsSheet = document.sheet(addedSheet);
@@ -163,8 +164,8 @@ function userDetails(userEmail){
   var rsValues = rs.getRange(2, 2, rs.getLastRow(), 5).getValues();
   rsValues.forEach(function(value){
     if(value[0] === userEmail){
-      value[1] !== "" ? details.discordUsername = value[1] : details.discordUsername = "NONE";
-      value[4] !== "" ? details.notes = value[4] : details.notes = "NONE";
+      if(value[1] !== "") details.discordUsername = value[1];
+      if(value[4] !== "") details.notes = value[4];
     }
   });
 
@@ -199,4 +200,16 @@ function setUserPermission(email, permission, action){
   } else if (action === "Delete") {
     range.clearContent();
   }
+}
+
+function editUserNotes(email, response){
+  var resSheet = document.sheet(formResponse),
+  allData = resSheet.getRange(2, 1, resSheet.getLastRow(), 6).getValues();
+  for(var i = 0; i < allData.length; i++){
+    if(allData[i][1] === email) {
+      resSheet.getRange(i+2, 6).setValue(response.getResponseText());
+      return email;
+    }
+  }
+  console.error("Email not found in Responses Sheet");
 }

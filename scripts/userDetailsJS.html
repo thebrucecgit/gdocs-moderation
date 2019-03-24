@@ -10,12 +10,25 @@ function preventFormSubmit() {
 }
 function onLoad(){
   preventFormSubmit();
+  let userDetailDiv = document.querySelector("#userDetails");
+  userDetailDiv.addEventListener("click", (e) => {
+    if(e.target.tagName === "I" && e.target.className === "user edit icon") {
+      let email = e.target.parentElement.parentElement.parentElement.querySelector("p").innerHTML;
+      document.getElementById("userHistory").innerHTML="<div class='ui loading segment'><p></p></div>";
+      google.script.run.withSuccessHandler(onEditUserNotesUi).editUserNotesUi(email);
+    }
+  })
 }
 window.addEventListener('load', onLoad);
 function fetchUserDetails(userEmail){
     document.getElementById("userHistory").innerHTML="<div class='ui loading segment'><p></p></div>";
     google.script.run.withSuccessHandler(onFetchUserDetails).userDetails(userEmail);
 }
+
+function onEditUserNotesUi(email){
+  fetchUserDetails(email);
+}
+
 function onFetchUserDetails(details){
     const colours = {
       ADD_COMMENTER: "blue",
@@ -35,6 +48,8 @@ function onFetchUserDetails(details){
       historyHTML.push("</div>")
     })
     let userDetails = 
+      "<h3 class='ui header'>Email: </h3>" + 
+      "<p>" + details.email + "</p>" + 
       "<h4 class='ui header'>Current Access: </h4>" +
       "<p>" + currentAccess(details.currentAccess) + "</p>" +
       "<h4 class='ui header'>First Joined: </h4>" +
@@ -44,7 +59,7 @@ function onFetchUserDetails(details){
       "<h4 class='ui header'>Mod: </h4>" +
       "<p>" + details.mod.toString().toUpperCase() + "</p>" +
       "<h4 class='ui header'>Notes: </h4>" +
-      "<p>" + details.notes + "</p>";
+      "<p>" + details.notes + " <a><i class='user edit icon'></i></a></p>";
     document.getElementById("userDetails").innerHTML = userDetails;
     document.getElementById("userHistory").innerHTML = historyHTML.join("");
 }

@@ -29,6 +29,15 @@ function adminConsole(){
   document.ui().showSidebar(html);
 }
 
+function editUserNotesUi(email){
+  var ui = document.ui();
+  var response = ui.prompt(email, "Edit User's Notes", ui.ButtonSet.OK_CANCEL);
+  if(response.getSelectedButton() === ui.Button.OK) {
+    return editUserNotes(email. response);
+  }
+  return false; 
+}
+
 function doGet(){
   return HtmlService.createHtmlOutputFromFile("Setting");
 }
