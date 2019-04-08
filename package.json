@@ -12,7 +12,7 @@
     "url": "git+https://github.com/thebrucecgit/gdocs-moderation.git"
   },
   "author": "Bruce C",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/thebrucecgit/gdocs-moderation/issues"
   },
