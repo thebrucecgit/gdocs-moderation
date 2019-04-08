@@ -186,19 +186,30 @@ function getUserPermissions(){
 function setUserPermission(email, permission, action){
   if(!isMod()) return false;
   var alreadyAddedEmailsSheet = document.sheet(addedSheet);
-  var addedEmails = alreadyAddedEmailsSheet.getRange(2, 1, alreadyAddedEmailsSheet.getLastRow(), 1).getValues();
-  addedEmails = getArrayFromValue(addedEmails);
+  var users = alreadyAddedEmailsSheet.getRange(2, 1, alreadyAddedEmailsSheet.getLastRow(), 2).getValues();
+  var addedEmails = [];
+  users.forEach(function(row){
+    addedEmails.push(row[0]);
+  });
   emailLocation = addedEmails.indexOf(email)
   if(emailLocation === -1) {
     console.error(email + " was not found in addedEmails sheet");
     return false;
   }
-  console.log(action);
   var range = alreadyAddedEmailsSheet.getRange(emailLocation+2, 2, 1, 1);
   if(action === "Save"){
+    if (users[emailLocation][1] !== "") {
+      console.log(email+" already has permissions");
+      return false;
+    }
+    DocumentApp.getActiveDocument().addEditor(email);
     range.setValue(permission);
+    console.log("Added permission " + permission + " to " + email);
   } else if (action === "Delete") {
+    DocumentApp.getActiveDocument().removeEditor(email);
     range.clearContent();
+    document.doc().addCommenter(email);
+    console.log("Deleted Permissions of " + email);
   }
 }
 

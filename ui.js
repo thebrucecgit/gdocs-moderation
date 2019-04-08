@@ -7,6 +7,7 @@
 // }
 
 function showSettings(){
+  if(ui("isSetup") && !ui("isMod")) return false;
   var html = HtmlService.createTemplateFromFile("Setting")
     .evaluate()
     .setTitle("Settings")
@@ -17,7 +18,7 @@ function showUserDetails(){
   if(!ui("isSetup") || !ui("isMod")) return false; // Check if it is setup correctly and if user has authorization
   var html = HtmlService.createTemplateFromFile("userDetails")
     .evaluate()
-    .setTitle("User Details")
+    .setTitle("User Details");
   document.ui().showSidebar(html);
 }
 

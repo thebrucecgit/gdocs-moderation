@@ -19,8 +19,11 @@ function setSheetHeader(sheet, data, widths){
 
 function setupSystem(){
   var ui = document.ui();
+  if(document.doc().getOwner().getEmail() !== Session.getActiveUser().getEmail()){
+    ui.alert("Access Denied", "Only the Owner of the document can run the SETUP command", ui.ButtonSet.OK);
+  }
   var res = ui.alert("Are you sure you want to setup?", "Only do this once", ui.ButtonSet.YES_NO);
-  if (res == ui.Button.NO) return;
+  if (res !== ui.Button.YES) return;
   console.log("Setting up system...")
   var currentDoc = DocumentApp.getActiveDocument(),
   mainSS = SpreadsheetApp.create(currentDoc.getName() + " Moderation Spreadsheet", 200, 5);

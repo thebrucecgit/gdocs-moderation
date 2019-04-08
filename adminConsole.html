@@ -7,7 +7,7 @@
   </head>
   <body>
     <h1>Admin <i class="tools icon"></i></h1>
-    <p>To add or change permissions for users. Clicking <span class="ui red text">Delete all perms</span> will remove all permissions for that user.</p>
+    <p>To add or change permissions for users. Clicking <span class="ui red text">Remove Perms</span> will remove editing or moderating permissions from that user. </p>
     <form class="ui form" onsubmit="setUserPermission(this.Email.value, this.Perm.value);">
       <h5>Set Permission for New User: </h5>
       <div class="field">
@@ -23,7 +23,6 @@
         </div>
       </div>
       <button onclick="setUserPermission(undefined, undefined, this)" value="Save" class="ui primary button">Save</button>
-      <button onclick="setUserPermission(undefined, undefined, this)" value="Delete" class="ui negative basic button">Delete all perms</button>
     </form>
     
     <div class="ui segments">

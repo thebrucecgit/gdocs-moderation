@@ -53,7 +53,10 @@ function isMod(mod){
   values.forEach(function(value){
     if(value[1] === "Mod") mods.push(value[0]);
   });
-  if(mods.indexOf(mod || Session.getActiveUser().getEmail()) !== -1) return true;
+  if((mods.indexOf(mod || Session.getActiveUser().getEmail()) !== -1) || 
+    (document.doc().getOwner().getEmail() === Session.getActiveUser().getEmail())) {
+    return true;
+  }
   return false;
 }
 
